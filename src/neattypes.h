@@ -29,6 +29,9 @@ namespace NEAT {
         void reset() {fitness = error = 0.0;}
     };
 
+#undef __in
+#undef __out
+#undef __inout
     #define __in const
     #define __out
     #define __inout

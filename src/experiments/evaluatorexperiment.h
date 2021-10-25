@@ -148,13 +148,14 @@ namespace NEAT {
             timer.start();
 
             size_t norgs = pop->size();
-            Network *nets[norgs];
+            Network** nets = new Network*[norgs];
             for(size_t i = 0; i < norgs; i++) {
                 nets[i] = pop->get(i)->net.get();
             }
-            OrganismEvaluation evaluations[norgs];
+            OrganismEvaluation* evaluations = new OrganismEvaluation[norgs];
 
             network_evaluator->execute(nets, evaluations, norgs);
+            delete [] nets;
 
             Organism *best = nullptr;
             for(size_t i = 0; i < norgs; i++) {
@@ -164,6 +165,7 @@ namespace NEAT {
                     best = org;
                 }
             }
+            delete [] evaluations;
 
             timer.stop();
 

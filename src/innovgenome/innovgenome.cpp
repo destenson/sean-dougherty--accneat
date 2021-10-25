@@ -447,7 +447,7 @@ void InnovGenome::mutate_delete_link() {
 
 bool InnovGenome::mutate_add_link(CreateInnovationFunc create_innov,
                                   int tries) {
-    InnovLinkGene *recur_checker_buf[links.size()];
+    InnovLinkGene** recur_checker_buf = new InnovLinkGene*[links.size()];
     RecurrencyChecker recur_checker(nodes.size(), links, recur_checker_buf);
 
 	InnovNodeGene *in_node = nullptr; //Pointers to the nodes
@@ -505,6 +505,7 @@ bool InnovGenome::mutate_add_link(CreateInnovationFunc create_innov,
             return false;
         }
     }
+    delete [] recur_checker_buf;
 
     // Create the gene.
     {
@@ -1221,9 +1222,9 @@ void InnovGenome::init_phenotype(Network &net) {
     //---
     //--- Create unsorted array of links, converting node ID to index in process.
     //---
-    NetLink netlinks[links.size()];
+    NetLink* netlinks = new NetLink[links.size()];
     size_t nlinks = 0;
-    size_t node_nlinks[nnodes];
+    size_t* node_nlinks = new size_t[nnodes];
     memset(node_nlinks, 0, sizeof(size_t) * nnodes);
 
     for(InnovLinkGene &link: links) {
@@ -1244,7 +1245,7 @@ void InnovGenome::init_phenotype(Network &net) {
     //---
     //--- Determine layout of links for each node in sorted array
     //---
-    NetNode netnodes[nnodes];
+    NetNode* netnodes = new NetNode[nnodes];
     netnodes[0].incoming_start = 0;
     netnodes[0].incoming_end = node_nlinks[0];
     for(size_t i = 1; i < nnodes; i++) {
@@ -1260,7 +1261,7 @@ void InnovGenome::init_phenotype(Network &net) {
     //--- Create sorted links
     //---
     memset(node_nlinks, 0, sizeof(size_t) * nnodes);
-    NetLink netlinks_sorted[nlinks];
+    NetLink* netlinks_sorted = new NetLink[nlinks];
     for(size_t i = 0; i < nlinks; i++) {
         NetLink &netlink = netlinks[i];
         size_t inode = netlink.out_node_index;
@@ -1268,10 +1269,16 @@ void InnovGenome::init_phenotype(Network &net) {
         netlinks_sorted[isorted] = netlink;
     }
 
+    delete [] node_nlinks;
+    delete [] netlinks;
+
     //---
     //--- Configure the net
     //---
     net.configure(dims, netnodes, netlinks_sorted);
+
+    delete [] netlinks_sorted;
+    delete [] netnodes;
 }
 
 InnovLinkGene *InnovGenome::find_link(int in_node_id, int out_node_id, bool is_recurrent) {
@@ -1302,11 +1309,12 @@ void InnovGenome::delete_if_orphaned_hidden_node(int node_id) {
     if( (node == nullptr) || (node->type != NT_HIDDEN) )
         return;
 
-    bool found_link;
+    bool found_link = false;
     for(InnovLinkGene &link: links) {
+        if (found_link)
+            break;
         if(link.in_node_id() == node_id || link.out_node_id() == node_id) {
             found_link = true;
-            break;
         }
     }
 

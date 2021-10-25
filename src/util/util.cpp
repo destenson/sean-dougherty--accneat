@@ -6,6 +6,7 @@
 using namespace std;
 
 void mkdir(const string &path) {
+#ifdef __linux__
     int status = ::mkdir(path.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
     if(0 != status) {
         char buf[2048];
@@ -13,11 +14,16 @@ void mkdir(const string &path) {
         perror(buf);
         exit(1);
     }
+#endif
 }
 
 bool exists(const std::string &path) {
+#ifdef __linux__
     struct stat buffer;
-    return (stat (path.c_str(), &buffer) == 0);     
+    return (stat (path.c_str(), &buffer) == 0);
+#else
+    return false;
+#endif
 }
 
 vector<string> permute_repeat(const string &letters,

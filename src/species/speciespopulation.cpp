@@ -289,7 +289,8 @@ void SpeciesPopulation::next_generation() {
     struct reproduce_parms_t {
         Species *species;
         int ioffspring;
-    } reproduce_parms[norgs];
+    };
+    reproduce_parms_t* reproduce_parms = new reproduce_parms_t[norgs];
 
     {
         size_t iorg = 0;
@@ -423,4 +424,6 @@ void SpeciesPopulation::next_generation() {
         assert(org.generation == generation);
     }
 #endif
+
+    delete [] reproduce_parms;
 }

@@ -70,7 +70,7 @@ real_t *CpuNetwork::get_outputs() {
 }
 
 void CpuNetwork::activate(size_t ncycles) {
-    real_t act_other[dims.nnodes.all];
+    real_t* act_other = new real_t[dims.nnodes.all];
 
     //Copy only input activation state.
     memcpy(act_other,
@@ -106,6 +106,7 @@ void CpuNetwork::activate(size_t ncycles) {
                act_other + dims.nnodes.input,
                sizeof(real_t) * (dims.nnodes.all - dims.nnodes.input));
     }
+    delete [] act_other;
 }
 
 vector<real_t> &CpuNetwork::get_activations(__out vector<real_t> &result) {

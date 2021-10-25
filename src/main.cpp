@@ -14,7 +14,9 @@
   limitations under the License.
 */
 #include "std.h" // Must be included first. Precompiled header with standard library includes.
+#ifdef __linux__
 #include <unistd.h>
+#endif
 #include "experiment.h"
 #include "neat.h"
 #include "rng.h"
@@ -74,6 +76,7 @@ int main(int argc, char *argv[]) {
     int maxgens = DEFAULT_MAX_GENS;
     bool force_delete = false;
 
+#ifdef __linux__
     {
         int opt;
         while( (opt = getopt(argc, argv, "fc:r:p:g:n:x:s:")) != -1) {
@@ -130,6 +133,65 @@ int main(int argc, char *argv[]) {
     if(exp == nullptr) {
         trap("No such experiment: " << experiment_name);
     }
+#else
+//    sh("bash -c 'rm -f experiment_*'");
+    env->num_runs = 10;
+    env->pop_size = 5000;
+
+    env->search_type = GeneticSearchType::COMPLEXIFY;
+    env->population_type = PopulationType::SPECIES;
+    env->genome_type = GenomeType::INNOV;
+
+    env->trait_param_mut_prob = 0.5;
+    env->trait_mutation_power = 1.0; // Power of mutation on a signle trait param
+    env->linktrait_mut_sig = 1.0; // Amount that mutation_num changes for a trait change inside a link
+    env->nodetrait_mut_sig = 0.5; // Amount a mutation_num changes on a link connecting a node that changed its trait
+    env->weight_mut_power = 1.8; // The power of a linkweight mutation
+
+    env->recur_prob = 0.05; // Prob. that a link mutation which doesn't have to be recurrent will be made recurrent
+
+    // These 3 global coefficients are used to determine the formula for
+    // computating the compatibility between 2 genomes.  The formula is:
+    // disjoint_coeff*pdg+excess_coeff*peg+mutdiff_coeff*mdmg.
+    // See the compatibility method in the Genome class for more info
+    // They can be thought of as the importance of disjoint Genes,
+    // excess Genes, and parametric difference between Genes of the
+    // same function, respectively.
+    env->disjoint_coeff = 1.0;
+    env->excess_coeff = 1.0;
+    env->mutdiff_coeff = 3.0;
+
+    // This global tells compatibility threshold under which two Genomes are considered the same species
+    env->compat_threshold = 10.0;
+
+    env->age_significance = 1.0; // How much does age matter?
+    env->survival_thresh = 0.4; // Percent of ave fitness for survival
+    env->mutate_only_prob = 0.25; // Prob. of a non-mating reproduction
+    env->mutate_random_trait_prob = 0.1;
+    env->mutate_link_trait_prob = 0.1;
+    env->mutate_node_trait_prob = 0.1;
+    env->mutate_link_weights_prob = 0.8;
+    env->mutate_toggle_enable_prob = 0.1;
+    env->mutate_gene_reenable_prob = 0.05;
+    env->mutate_add_node_prob = 0.01;
+    env->mutate_delete_node_prob = 0.01;
+    env->mutate_add_link_prob = 0.3;
+    env->mutate_delete_link_prob = 0.3;
+    env->mutate_add_link_reenables = false;
+    env->interspecies_mate_rate = 0.001; // Prob. of a mate being outside species
+    env->mate_multipoint_prob = 0.6;
+    env->mate_only_prob = 0.2; // Prob. of mating without mutation
+    env->recur_only_prob = 0.2;  // Probability of forcing selection of ONLY links that are naturally recurrent
+
+    env->dropoff_age = 15;  // Age where Species starts to be penalized
+    env->newlink_tries = 20;  // Number of tries mutate_add_link will attempt to find an open link
+    env->print_every = 1000; // Tells to print population to file every n generations
+
+    Experiment *exp = Experiment::get("xor");
+    if(exp == nullptr) {
+        trap("No such experiment: xor");
+    }
+#endif
 
     rng_t rng{rng_seed};
     exp->run(rng, maxgens);

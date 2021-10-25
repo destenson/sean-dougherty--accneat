@@ -1,19 +1,23 @@
 #include "std.h" // Must be included first. Precompiled header with standard library includes.
 #include "timer.h"
 #include <assert.h>
+#ifdef __linux__
 #include <sys/time.h>
+#endif
 
 using namespace NEAT;
 using namespace std;
 
 vector<Timer *> Timer::timers;
 
+#ifdef __linux__
 static double seconds() {
     struct timeval tv;
     gettimeofday( &tv, NULL );
 
     return double(tv.tv_sec + tv.tv_usec/1000000.0);
 }
+#endif
 
 Timer::Timer(const char *name) : _name(name) {
     timers.push_back(this);
@@ -24,15 +28,21 @@ Timer::~Timer() {
 }
 
 void Timer::start() {
+#ifdef __linux__
     assert(_start == 0.0);
 
     _start = seconds();
+#endif
 }
 
 void Timer::stop() {
+#ifdef __linux__
     assert(_start != 0.0);
 
     double t = seconds() - _start;
+#else
+    double t = 0.0000001;
+#endif
     _recent = t;
     _start = 0.0;
 
