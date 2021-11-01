@@ -53,6 +53,7 @@ namespace NEAT {
 		// ******* When do we need to delta code? *******
 		real_t highest_fitness;  //Stagnation detector
 		int highest_last_changed; //If too high, leads to delta coding
-	};
+        void compute_fitnesses();
+    };
 
 } // namespace NEAT

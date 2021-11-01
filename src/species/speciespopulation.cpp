@@ -100,10 +100,12 @@ void SpeciesPopulation::write(std::ostream& out) {
 }
 
 void SpeciesPopulation::next_generation() {
+    int total_organisms = norgs; // todo: get rid of this variable
 #ifndef NDEBUG
     for(SpeciesOrganism &org: orgs.curr()) {
         assert(org.generation == generation);
     }
+    assert(total_organisms == env->pop_size);
 #endif
 
     generation++;
@@ -116,24 +118,18 @@ void SpeciesPopulation::next_generation() {
 	//Offspring
 	real_t skim; 
 	int total_expected;  //precision checking
-	int total_organisms = norgs; // todo: get rid of this variable
-    assert(total_organisms == env->pop_size);
 	int max_expected;
 	Species *best_species = nullptr;
 	int final_expected;
 
-	std::vector<Species*> sorted_species;  //Species sorted by max fit org in Species
-	int half_pop;
-
 	//We can try to keep the number of species constant at this number
 	int num_species=species.size();
 
-    for(Species *s: species) {
-        s->compute_average_fitness();
-        s->compute_max_fitness();
-    }
+    compute_fitnesses();
 
-	//Stick the Species pointers into a new Species list for sorting
+    std::vector<Species*> sorted_species;  //Species sorted by max fit org in Species
+
+    //Stick the Species pointers into a new Species list for sorting
 	for(Species *s: species) {
 		sorted_species.push_back(s);
 	}
@@ -247,6 +243,8 @@ void SpeciesPopulation::next_generation() {
                    size_t(highest_last_changed), highest_fitness);
         }
     }
+
+    int half_pop = 0;
 
 	//Check for stagnation- if there is stagnation, perform delta-coding
 	if (highest_last_changed >= env->dropoff_age+5) {
@@ -364,9 +362,7 @@ void SpeciesPopulation::next_generation() {
             if(!org.species) {
                 //It didn't fit into any of the existing species. Check if it fits
                 //into one we've just created.
-                for(size_t i = index_new_species, n = species.size();
-                    i < n;
-                    i++) {
+                for(size_t i = index_new_species, n = species.size(); i < n; i++) {
 
                     Species *s = species[i];
                     if(env->genome_manager->are_compatible(*org.genome,
@@ -426,4 +422,11 @@ void SpeciesPopulation::next_generation() {
 #endif
 
     delete [] reproduce_parms;
+}
+
+void SpeciesPopulation::compute_fitnesses() {
+    for(Species *s: species) {
+        s->compute_average_fitness();
+        s->compute_max_fitness();
+    }
 }

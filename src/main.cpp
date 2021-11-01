@@ -196,6 +196,14 @@ int main(int argc, char *argv[]) {
     rng_t rng{rng_seed};
     exp->run(rng, maxgens);
 
+#ifdef __linux__
+    string cmd("find -name fittest_* -print0 | xargs -0 cat > ");
+    cmd += experiment_name;
+    cmd += string("-") + to_string(env->num_runs) + string(".results");
+    sh(cmd.c_str());
+    sh("rm -rf experiment_*");
+#endif
+
     return(0);
 }
 
