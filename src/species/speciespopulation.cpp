@@ -21,7 +21,7 @@
 #include "timer.h"
 #include "util.h"
 
-#include <assert.h>
+#include <cassert>
 #include <omp.h>
 
 using namespace NEAT;
@@ -33,7 +33,9 @@ SpeciesPopulation::SpeciesPopulation(rng_t rng,
     , generation(0)
     , orgs(rng, seeds, seeds.size())
     , highest_fitness(0.0)
-    , highest_last_changed(0) {
+    , highest_last_changed(0)
+    , last_species(0)
+{
 
 	spawn();
 }
@@ -58,7 +60,7 @@ Organism *SpeciesPopulation::get(size_t index) {
 }
 
 unique_ptr<Organism> SpeciesPopulation::make_copy(size_t index) {
-    SpeciesOrganism *copy = new SpeciesOrganism( (SpeciesOrganism&)*get(index) );
+    auto *copy = new SpeciesOrganism( (SpeciesOrganism&)*get(index) );
     return unique_ptr<Organism>(copy);
 }
 
@@ -86,7 +88,7 @@ void SpeciesPopulation::speciate() {
             }
         }
         if(!org.species) {
-            Species *s = new Species(++last_species);
+            auto *s = new Species(++last_species);
             species.push_back(s);
             org.species = s;
         }

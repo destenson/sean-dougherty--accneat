@@ -10,3 +10,9 @@
 /gold*/
 /src/util/std.h.gch
 cmake-*/
+
+build*/
+.idea/
+
+logs/*
+*.results
