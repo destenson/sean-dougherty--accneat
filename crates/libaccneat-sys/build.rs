@@ -99,11 +99,12 @@ fn main() {
     );
 
     let dst = Config::new("../../")
+        .uses_cxx11()
         .no_build_target(true)
         .build();
 
-    println!("cargo:rustc-link-search=native={}", dst.display());
-    println!("cargo:rustc-link-lib=static=accneat");
+    println!("cargo:rustc-link-search=native={}\\build\\Debug", dst.display());
+    // println!("cargo:rustc-link-lib=static=accneat");
 
     dotenv::dotenv().ok();
 
@@ -147,6 +148,7 @@ mod bindings {
         }
 
         let src = &"-I../../src/".to_string();
+        let out_dir = PathBuf::from(env::var("OUT_DIR").unwrap());
 
         let bindings = bindgen::Builder::default()
             .conservative_inline_namespaces()
@@ -172,19 +174,21 @@ mod bindings {
             .clang_arg(src.to_owned() + "network/cuda")
             .clang_arg(src.to_owned() + "species")
             .clang_arg(src.to_owned() + "util")
+            .clang_arg(format!("-L{}/build/Debug", env::var("OUT_DIR").unwrap()))
+            // .clang_arg(format!("-L{}/build/Release", env::var("OUT_DIR").unwrap()))
             .clang_arg("-fopenmp")
             // .clang_arg("-lgomp")
             .clang_arg("-MMD")
             .clang_arg("-Wall")
             .clang_arg("-Werror")
-            .opaque_type("root::std::.*")
-            // .opaque_type("::std::.*")
-            .opaque_type("std::.*")
             .clang_arg("-std=c++17")
+            .opaque_type("root::std::.*")
+            // // .opaque_type("::std::.*")
+            .opaque_type("std::.*")
+            // .blocklist_type("root::std::.*")
+            // .blocklist_type("std::.*")
             .allowlist_type("std::default_random_engine")
             .allowlist_type("NEAT::.*")
-            .blocklist_type("root::std::.*")
-            // .blocklist_type("std::.*")
             .generate()
             .expect("Unable to generate bindings");
 
@@ -200,10 +204,12 @@ mod bindings {
 mod build {
     use super::*;
     use std::env;
-    use std::path::Path;
+    use std::path::{Path, PathBuf};
 
     fn find_include_dir() -> Option<String> {
         let link_lib = link_lib_base();
+
+        // let out_dir = PathBuf::from(env::var("OUT_DIR").unwrap());
 
         println!("cargo:rerun-if-env-changed=ACCNEAT_INC_DIR");
         println!("cargo:rerun-if-env-changed=ACCNEAT_LIB_DIR");
@@ -238,7 +244,12 @@ mod build {
             println!("debug:inc_dir={}/network/cuda", inc_dir);
             println!("debug:inc_dir={}/species", inc_dir);
             println!("debug:inc_dir={}/util", inc_dir);
-            println!("debug:lib_dir={}/", &inc_dir);
+            // println!("debug:lib_dir={}/", &inc_dir);
+
+            // println!("cargo:rustc-link-search={}", out_dir.join("/build/Debug").to_str().unwrap());
+            // println!("cargo:rustc-link-search=native={}", out_dir.join("/build/Debug").to_str().unwrap());
+            // println!("cargo:rustc-link-search={}", out_dir.join("/build/Release").to_str().unwrap());
+            // println!("cargo:rustc-link-search=native={}", out_dir.join("/build/Release").to_str().unwrap());
             Some(inc_dir)
         }
     }

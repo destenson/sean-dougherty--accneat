@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.16)
 project(accneat)
 
-set(CMAKE_CXX_STANDARD 98)
+#set(CMAKE_CXX_STANDARD 98)
 
 include_directories(src)
 include_directories(src/experiments)
@@ -14,16 +14,11 @@ include_directories(src/network/cuda)
 include_directories(src/species)
 include_directories(src/util)
 
-add_library(accneat-static
-        src/experiments/maze/mazeevaluator.cxx
-        src/experiments/static/staticevaluator.cxx
-        )
-
 set(CMAKE_CXX_STANDARD 11)
 
 add_library(accneat
-        src/experiments/maze/maze.cpp
-        src/experiments/maze/mazeevaluator.h
+#        src/experiments/maze/maze.cpp
+#        src/experiments/maze/mazeevaluator.h
         src/experiments/static/cfg.cpp
         src/experiments/static/regex.cpp
         src/experiments/static/sequence.cpp
@@ -82,6 +77,8 @@ add_library(accneat
         src/genome.h
         src/genomemanager.cpp
         src/genomemanager.h
+#        src/experiments/maze/mazeevaluator.cxx
+        src/experiments/static/staticevaluator.cxx
         src/neat.cpp
         src/neat.h
         src/neattypes.h
@@ -90,9 +87,18 @@ add_library(accneat
         src/population.cpp
         src/population.h)
 
-add_executable(acc-neat
-        src/main.cpp
-        src/neat.cpp
-        )
+#install(TARGETS test DESTINATION lib)
+#install(TARGETS test DESTINATION lib)
 
-add_dependencies(acc-neat accneat accneat-static)
+#add_dependencies(accneat accneat-static)
+
+#add_executable(acc-neat
+#        src/main.cpp
+#        src/neat.cpp
+#        src/experiments/maze/mazeevaluator.cxx
+#        src/experiments/static/staticevaluator.cxx
+#        )
+#
+#add_dependencies(acc-neat accneat accneat-static)
+
+#target_link_libraries(accneat PUBLIC )
