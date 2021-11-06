@@ -11,8 +11,8 @@ namespace NEAT {
         std::default_random_engine engine;
 
     public:
-//        rng_t() {
-//        }
+        rng_t() {
+        }
 
         rng_t(int seedval) {
             seed(seedval);

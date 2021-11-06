@@ -27,7 +27,9 @@ const std::vector<NEAT::nodetype> NEAT::nodetypes = {
 
 using NEAT::NeatEnv;
 
-NeatEnv *NEAT::env = new NeatEnv();
+static NeatEnv sEnv;
+NeatEnv* NEAT::env = &sEnv;
+//NeatEnv *NEAT::env = new NeatEnv();
 
 int NEAT::getUnitCount(const char *string, const char *set)
 {

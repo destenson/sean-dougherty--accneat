@@ -1,7 +1,9 @@
 extern crate openmp_sys;
+extern crate cmake;
 
 use std::process::Command;
 
+use cmake::Config;
 
 fn main() {
 
@@ -96,12 +98,12 @@ fn main() {
         concat!(env!("CARGO_MANIFEST_DIR"), "/Cargo.lock")
     );
 
-    // let dst = Config::new("../../vendor/accneat")
-    //     .no_build_target(true)
-    //     .build();
-    //
-    // println!("cargo:rustc-link-search=native={}", dst.display());
-    // println!("cargo:rustc-link-lib=static=accneat");
+    let dst = Config::new("../../")
+        .no_build_target(true)
+        .build();
+
+    println!("cargo:rustc-link-search=native={}", dst.display());
+    println!("cargo:rustc-link-lib=static=accneat");
 
     dotenv::dotenv().ok();
 
@@ -175,13 +177,13 @@ mod bindings {
             .clang_arg("-MMD")
             .clang_arg("-Wall")
             .clang_arg("-Werror")
-            // .opaque_type("root::std::.*")
+            .opaque_type("root::std::.*")
             // .opaque_type("::std::.*")
             .opaque_type("std::.*")
             .clang_arg("-std=c++17")
             .allowlist_type("std::default_random_engine")
             .allowlist_type("NEAT::.*")
-            // .blocklist_type("root::std::.*")
+            .blocklist_type("root::std::.*")
             // .blocklist_type("std::.*")
             .generate()
             .expect("Unable to generate bindings");
