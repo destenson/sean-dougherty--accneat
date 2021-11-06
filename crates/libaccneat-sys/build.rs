@@ -104,7 +104,8 @@ fn main() {
         .build();
 
     println!("cargo:rustc-link-search=native={}\\build\\Debug", dst.display());
-    // println!("cargo:rustc-link-lib=static=accneat");
+    println!("cargo:rustc-link-search=native={}/build", dst.display());
+    println!("cargo:rustc-link-lib=static=accneat");
 
     dotenv::dotenv().ok();
 
@@ -175,6 +176,7 @@ mod bindings {
             .clang_arg(src.to_owned() + "species")
             .clang_arg(src.to_owned() + "util")
             .clang_arg(format!("-L{}/build/Debug", env::var("OUT_DIR").unwrap()))
+            .clang_arg(format!("-L{}/build", env::var("OUT_DIR").unwrap()))
             // .clang_arg(format!("-L{}/build/Release", env::var("OUT_DIR").unwrap()))
             .clang_arg("-fopenmp")
             // .clang_arg("-lgomp")
