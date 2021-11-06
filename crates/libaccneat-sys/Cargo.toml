@@ -1,0 +1,18 @@
+[package]
+name = "libaccneat-sys"
+version = "0.1.0"
+authors = ["Dennis E <git@destenson.digital>"]
+edition = "2021"
+description = """
+Rust wrapper for the accneat library.
+"""
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+
+[build-dependencies]
+bindgen = "0.59"
+cmake = "0.1"
+dotenv = "0.15"
+openmp-sys = "1.2"

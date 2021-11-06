@@ -15,6 +15,9 @@
 */
 #pragma once
 
+#ifndef GENOME_H__
+#define GENOME_H__
+
 #include "rng.h"
 
 namespace NEAT {
@@ -43,4 +46,6 @@ namespace NEAT {
 
 } // namespace NEAT
 
+
+#endif // #ifndef GENOME_H__
 

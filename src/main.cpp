@@ -135,8 +135,11 @@ int main(int argc, char *argv[]) {
     }
 #else
 //    sh("bash -c 'rm -f experiment_*'");
+    rng_seed = 10;
     env->num_runs = 10;
-    env->pop_size = 5000;
+    env->pop_size = 10000;
+//    env->num_runs = 10;
+//    env->pop_size = 5000;
 
     env->search_type = GeneticSearchType::COMPLEXIFY;
     env->population_type = PopulationType::SPECIES;
@@ -185,7 +188,7 @@ int main(int argc, char *argv[]) {
 
     env->dropoff_age = 15;  // Age where Species starts to be penalized
     env->newlink_tries = 20;  // Number of tries mutate_add_link will attempt to find an open link
-    env->print_every = 1000; // Tells to print population to file every n generations
+    env->print_every = 10000; // Tells to print population to file every n generations
 
     Experiment *exp = Experiment::get("xor");
     if(exp == nullptr) {

@@ -1,5 +1,8 @@
 #pragma once
 
+#ifndef UTIL_STATS_H__
+#define UTIL_STATS_H__
+
 namespace NEAT {
     template<typename T, typename U=T>
     U sum(const std::vector<T> &vec) {
@@ -64,3 +67,4 @@ namespace NEAT {
         return result;
     }
 }
+#endif // #ifndef UTIL_STATS_H__

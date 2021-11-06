@@ -15,6 +15,9 @@
 */
 #pragma once
 
+#ifndef POPULATION_H__
+#define POPULATION_H__
+
 #include "genome.h"
 #include "genomemanager.h"
 #include "rng.h"
@@ -42,3 +45,4 @@ namespace NEAT {
 
 } // namespace NEAT
 
+#endif // #ifndef POPULATION_H__

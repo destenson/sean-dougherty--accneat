@@ -15,6 +15,9 @@
 */
 #pragma once
 
+#ifndef INNOVNODEGENE_H__
+#define INNOVNODEGENE_H__
+
 #include <assert.h>
 #include "neat.h"
 
@@ -46,4 +49,6 @@ namespace NEAT {
 	};
 
 } // namespace NEAT
+
+#endif // #ifndef INNOVNODEGENE_H__
 

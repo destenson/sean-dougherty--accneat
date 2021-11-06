@@ -1,5 +1,8 @@
 #pragma once
 
+#ifndef RECURRENCYCHECKER_H__
+#define RECURRENCYCHECKER_H__
+
 namespace NEAT {
 
     class RecurrencyChecker {
@@ -99,3 +102,4 @@ namespace NEAT {
     };
 
 }
+#endif // #ifndef RECURRENCYCHECKER_H__

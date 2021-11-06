@@ -1,5 +1,8 @@
 #pragma once
 
+#ifndef CUDANETWORKBATCH_H__
+#define CUDANETWORKBATCH_H__
+
 #include "cudautil.h"
 #include "cudanetwork.h"
 #include "cudanetworkkernel.h"
@@ -162,3 +165,5 @@ namespace NEAT {
     };
 
 }
+
+#endif // #ifndef CUDANETWORKBATCH_H__

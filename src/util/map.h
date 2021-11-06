@@ -1,5 +1,8 @@
 #pragma once
 
+#ifndef UTIL_MAP_H__
+#define UTIL_MAP_H__
+
 namespace NEAT {
 
     struct Glyph {
@@ -56,3 +59,6 @@ namespace NEAT {
     Map parse_map(std::string path);
 
 }
+#endif // #ifndef UTIL_MAP_H__
+
+

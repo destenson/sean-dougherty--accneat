@@ -1,5 +1,8 @@
 #pragma once
 
+#ifndef CUDANETWORK_H__
+#define CUDANETWORK_H__
+
 #include "cudautil.h"
 #include "network.h"
 
@@ -166,3 +169,5 @@ namespace NEAT {
     };
 
 }
+
+#endif // #ifndef CUDANETWORK_H__

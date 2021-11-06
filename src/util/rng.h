@@ -1,5 +1,8 @@
 #pragma once
 
+#ifndef UTIL_RNG_H__
+#define UTIL_RNG_H__
+
 #include "neat.h"
 
 namespace NEAT {
@@ -8,8 +11,8 @@ namespace NEAT {
         std::default_random_engine engine;
 
     public:
-        rng_t() {
-        }
+//        rng_t() {
+//        }
 
         rng_t(int seedval) {
             seed(seedval);
@@ -84,3 +87,4 @@ namespace NEAT {
         static void test();
     };
 }
+#endif // #ifndef UTIL_RNG_H__

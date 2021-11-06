@@ -1,5 +1,8 @@
 #pragma once
 
+#ifndef EVALUATOREXPERIMENT_H__
+#define EVALUATOREXPERIMENT_H__
+
 #include "experiment.h"
 #include "genomemanager.h"
 #include "network.h"
@@ -187,3 +190,6 @@ namespace NEAT {
     };
 
 }
+
+#endif // #ifndef EVALUATOREXPERIMENT_H__
+

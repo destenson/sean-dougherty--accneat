@@ -1,5 +1,8 @@
 #pragma once
 
+#ifndef INNOVGENOMEMANAGER_H__
+#define INNOVGENOMEMANAGER_H__
+
 #include "genomemanager.h"
 #include "innovation.h"
 
@@ -56,3 +59,5 @@ namespace NEAT {
     };
 
 }
+#endif // #ifndef INNOVGENOMEMANAGER_H__
+

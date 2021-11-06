@@ -1,5 +1,8 @@
 #pragma once
 
+#ifndef NETWORKEXECUTOR_H__
+#define NETWORKEXECUTOR_H__
+
 namespace NEAT {
 
 #define NACTIVATES_PER_INPUT 10
@@ -29,3 +32,6 @@ namespace NEAT {
 #else
 #include "cpunetworkexecutor.h"
 #endif
+
+
+#endif // #ifndef NETWORKEXECUTOR_H__

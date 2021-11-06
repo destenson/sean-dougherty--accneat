@@ -1,5 +1,8 @@
 #pragma once
 
+#ifndef PROTOINNOVLINKGENE_H__
+#define PROTOINNOVLINKGENE_H__
+
 namespace NEAT {
 
     class ProtoInnovLinkGene {
@@ -35,3 +38,4 @@ namespace NEAT {
     };
 
 }
+#endif // #ifndef PROTOINNOVLINKGENE_H__

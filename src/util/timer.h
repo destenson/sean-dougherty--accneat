@@ -1,5 +1,8 @@
 #pragma once
 
+#ifndef UTIL_TIMER_H__
+#define UTIL_TIMER_H__
+
 namespace NEAT {
     class Timer {
         static std::vector<Timer *> timers;
@@ -21,3 +24,5 @@ namespace NEAT {
         static void report();
     };
 }
+
+#endif // #ifndef UTIL_TIMER_H__

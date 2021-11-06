@@ -1,5 +1,8 @@
 #pragma once
 
+#ifndef CUDANETWORKEXECUTOR_H__
+#define CUDANETWORKEXECUTOR_H__
+
 #include "networkexecutor.h"
 #include "cudanetworkbatch.h"
 
@@ -65,3 +68,6 @@ namespace NEAT {
     }
 
 } // namespace NEAT
+
+#endif // #ifndef CUDANETWORKEXECUTOR_H__
+

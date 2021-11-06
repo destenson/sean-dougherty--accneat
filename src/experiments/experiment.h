@@ -1,5 +1,8 @@
 #pragma once
 
+#ifndef EXPERIMENT_H__
+#define EXPERIMENT_H__
+
 namespace NEAT {
 
     class Experiment {
@@ -24,3 +27,5 @@ namespace NEAT {
         const char *name;
     };
 }
+
+#endif // #ifndef EXPERIMENT_H__

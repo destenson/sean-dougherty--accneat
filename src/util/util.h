@@ -1,5 +1,8 @@
 #pragma once
 
+#ifndef UTIL_H__
+#define UTIL_H__
+
 namespace NEAT {
 
 #define error(msg) {std::cerr << __FILE__ << ":" << __LINE__ << ": " << msg << std::endl; exit(1);}
@@ -131,3 +134,5 @@ bool exists(const std::string &path);
 
 // e.g. ("ab", 3) --> {"aaa", "aab", "aba", "abb", "baa", "bab", "bba", "bbb"}
 std::vector<std::string> permute_repeat(const std::string &letters, size_t len);
+
+#endif // #ifndef UTIL_H__

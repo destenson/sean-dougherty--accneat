@@ -1,10 +1,14 @@
 #pragma once
 
+#ifndef NEATTYPES_H__
+#define NEATTYPES_H__
+
 // Some common types that must be in their own header so they can be used by the
 // CUDA compiler (C++11 features not currently supported).
 namespace NEAT {
 
-    typedef float real_t;
+//    typedef float real_t;
+    typedef double real_t;
 
     typedef unsigned char uchar;
     typedef unsigned short ushort;
@@ -36,3 +40,5 @@ namespace NEAT {
     #define __out
     #define __inout
 }
+
+#endif // #ifndef NEATTYPES_H__

@@ -15,6 +15,9 @@
 */
 #pragma once
 
+#ifndef ORGANISM_H__
+#define ORGANISM_H__
+
 #include "genome.h"
 #include "network.h"
 
@@ -54,3 +57,4 @@ namespace NEAT {
 
 } // namespace NEAT
 
+#endif // #ifndef ORGANISM_H__

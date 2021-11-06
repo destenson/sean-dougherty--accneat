@@ -1,5 +1,8 @@
 #pragma once
 
+#ifndef STATICEXPERIMENT_H__
+#define STATICEXPERIMENT_H__
+
 #include "evaluatorexperiment.h"
 #include "staticevaluator.h"
 
@@ -32,3 +35,4 @@ namespace NEAT {
     }
 
 }
+#endif // #ifndef STATICEXPERIMENT_H__

@@ -48,6 +48,9 @@ clean:
 ./neat: ${OBJECTS} ${CUDA_OBJECTS}
 	g++ ${PROFILE} ${OBJECTS} ${CUDA_OBJECTS} ${PFM_LD_FLAGS} ${LIBS} -o $@
 
+#./neat.${SO}: ${OBJECTS} ${CUDA_OBJECTS}
+#	g++ ${PROFILE} ${OBJECTS} ${CUDA_OBJECTS} ${PFM_LD_FLAGS} ${LIBS} -o $@
+
 src/util/std.h.gch: src/util/std.h Makefile.conf Makefile
 	g++ ${CC_FLAGS} -std=c++11 $< -o $@
 

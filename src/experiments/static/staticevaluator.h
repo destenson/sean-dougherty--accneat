@@ -1,5 +1,9 @@
 #pragma once
 
+#ifndef STATICEVALUATOR_H__
+#define STATICEVALUATOR_H__
+
+
 #include "neattypes.h"
 
 namespace NEAT {
@@ -37,3 +41,5 @@ namespace NEAT {
     extern class NetworkEvaluator *create_static_evaluator(const std::vector<Test> &tests);
 
 }
+#endif // #ifndef STATICEVALUATOR_H__
+

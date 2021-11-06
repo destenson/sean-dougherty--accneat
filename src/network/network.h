@@ -15,6 +15,9 @@
 */
 #pragma once
 
+#ifndef NETWORK_H__
+#define NETWORK_H__
+
 #include "neattypes.h"
 
 namespace NEAT {
@@ -85,3 +88,5 @@ namespace NEAT {
     };
 
 } // namespace NEAT
+#endif // #ifndef NETWORK_H__
+

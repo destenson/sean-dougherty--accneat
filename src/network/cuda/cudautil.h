@@ -1,5 +1,8 @@
 #pragma once
 
+#ifndef CUDAUTIL_H__
+#define CUDAUTIL_H__
+
 #include <cstdio>
 #include <iostream>
 #include <vector>
@@ -67,4 +70,6 @@ using namespace NEAT;
             d_buf = alloc_dev(newlen);
         }
     }
+
+#endif // #ifndef CUDAUTIL_H__
 

@@ -32,9 +32,9 @@ SpeciesPopulation::SpeciesPopulation(rng_t rng,
     : norgs(seeds.size())
     , generation(0)
     , orgs(rng, seeds, seeds.size())
+    , last_species(0)
     , highest_fitness(0.0)
     , highest_last_changed(0)
-    , last_species(0)
 {
 
 	spawn();
@@ -127,7 +127,7 @@ void SpeciesPopulation::next_generation() {
 	//We can try to keep the number of species constant at this number
 	int num_species=species.size();
 
-    compute_fitnesses();
+    compute_species_fitnesses();
 
     std::vector<Species*> sorted_species;  //Species sorted by max fit org in Species
 
@@ -426,7 +426,7 @@ void SpeciesPopulation::next_generation() {
     delete [] reproduce_parms;
 }
 
-void SpeciesPopulation::compute_fitnesses() {
+void SpeciesPopulation::compute_species_fitnesses() {
     for(Species *s: species) {
         s->compute_average_fitness();
         s->compute_max_fitness();

@@ -1,5 +1,8 @@
 #pragma once
 
+#ifndef GENOMEMANAGER_H__
+#define GENOMEMANAGER_H__
+
 #include "neat.h"
 #include "rng.h"
 
@@ -45,3 +48,5 @@ namespace NEAT {
     };
 
 }
+#endif // #ifndef GENOMEMANAGER_H__
+

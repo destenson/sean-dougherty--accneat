@@ -15,6 +15,9 @@
 */
 #pragma once
 
+#ifndef INNOVGENOME_H__
+#define INNOVGENOME_H__
+
 #include "genome.h"
 #include "innovlinkgene.h"
 #include "innovnodegene.h"
@@ -169,4 +172,6 @@ namespace NEAT {
         InnovNodeLookup node_lookup;
     };
 }
+
+#endif // #ifndef INNOVGENOME_H__
 

@@ -13,7 +13,11 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 */
-#pragma once 
+#pragma once
+
+#ifndef SPECIESPOPULATION_H__
+#define SPECIESPOPULATION_H__
+
 
 #include "organismsbuffer.h"
 #include "population.h"
@@ -53,7 +57,10 @@ namespace NEAT {
 		// ******* When do we need to delta code? *******
 		real_t highest_fitness;  //Stagnation detector
 		int highest_last_changed; //If too high, leads to delta coding
-        void compute_fitnesses();
+        void compute_species_fitnesses();
     };
 
 } // namespace NEAT
+
+#endif // #ifndef SPECIESPOPULATION_H__
+

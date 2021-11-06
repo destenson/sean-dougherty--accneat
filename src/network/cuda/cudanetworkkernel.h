@@ -1,5 +1,8 @@
 #pragma once
 
+#ifndef CUDANETWORKKERNEL_H__
+#define CUDANETWORKKERNEL_H__
+
 namespace NEAT {
 
 //--------------------------------------------------------------------------------
@@ -196,3 +199,6 @@ namespace NEAT {
     } // kernel
 
 }
+
+#endif // #ifndef CUDANETWORKKERNEL_H__
+

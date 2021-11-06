@@ -1,5 +1,8 @@
 #pragma once
 
+#ifndef MAZEEVALUATOR_H__
+#define MAZEEVALUATOR_H__
+
 namespace NEAT {
 
     enum sensor_t {
@@ -21,3 +24,6 @@ namespace NEAT {
 
     class NetworkEvaluator *create_maze_evaluator();
 }
+#endif // #ifndef MAZEEVALUATOR_H__
+
+

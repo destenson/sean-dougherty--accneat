@@ -1,5 +1,8 @@
 #pragma once
 
+#ifndef CPUNETWORK_H__
+#define CPUNETWORK_H__
+
 #include "network.h"
 
 namespace NEAT {
@@ -34,3 +37,6 @@ namespace NEAT {
 	};
 
 }
+
+#endif // #ifndef CPUNETWORK_H__
+

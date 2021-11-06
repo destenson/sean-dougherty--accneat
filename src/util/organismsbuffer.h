@@ -1,5 +1,8 @@
 #pragma once
 
+#ifndef ORGANISMSBUFFER_H__
+#define ORGANISMSBUFFER_H__
+
 #include "organism.h"
 #include "rng.h"
 #include <assert.h>
@@ -80,3 +83,4 @@ namespace NEAT {
     };
 
 }
+#endif // #ifndef ORGANISMSBUFFER_H__

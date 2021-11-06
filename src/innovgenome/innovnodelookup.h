@@ -1,5 +1,8 @@
 #pragma once
 
+#ifndef INNOVNODELOOKUP_H__
+#define INNOVNODELOOKUP_H__
+
 #include "innovnodegene.h"
 
 namespace NEAT {
@@ -37,3 +40,6 @@ namespace NEAT {
     };
 
 }
+#endif // #ifndef INNOVNODELOOKUP_H__
+
+

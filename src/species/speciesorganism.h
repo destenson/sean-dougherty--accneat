@@ -1,5 +1,8 @@
 #pragma once
 
+#ifndef SPECIESORGANISM_H__
+#define SPECIESORGANISM_H__
+
 #include "organism.h"
 
 namespace NEAT {
@@ -24,3 +27,4 @@ namespace NEAT {
     };
 
 }
+#endif // #ifndef SPECIESORGANISM_H__

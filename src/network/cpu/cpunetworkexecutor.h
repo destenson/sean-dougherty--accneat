@@ -1,4 +1,6 @@
 #pragma once
+#ifndef CPUNETWORKEXECUTOR_H__
+#define CPUNETWORKEXECUTOR_H__
 
 #include "cpunetwork.h"
 
@@ -67,3 +69,5 @@ namespace NEAT {
         return new CpuNetworkExecutor<Evaluator>();
     }
 }
+
+#endif // #ifndef CPUNETWORKEXECUTOR_H__
