@@ -1,5 +1,7 @@
+use std::collections::HashSet;
 use std::fmt::Formatter;
 use std::fs::File;
+use std::hash::{Hash, Hasher};
 use std::io::{BufReader, Stderr};
 // use std::env::{args, Args};
 use std::process::{Command, Output, Stdio};
@@ -73,7 +75,7 @@ pub struct AccNeatArgs {
 }
 
 pub(crate) fn build_cmd(args: &[String]) -> std::io::Result<Output> {
-    println!("build_cmd({:?})", &args);
+    // println!("build_cmd({:?})", &args);
     if cfg!(target_os = "windows") {
         // Command::new(".\\vendor\\accneat\\cmake-build-debug\\accneat.exe")
         Command::new("..\\..\\cmake-build-debug\\accneat.exe")
@@ -154,6 +156,7 @@ enum Error {
     ParseIntError(std::num::ParseIntError),
 }
 
+#[derive(Clone, Copy)]
 struct OrganismInfo {
     id: usize,
     fitness: f32,
@@ -172,15 +175,26 @@ impl Default for OrganismInfo {
 
 impl std::fmt::Display for OrganismInfo {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        writeln!(f, "Org: {}  Fitness: {}  Error: {}", self.id, self.fitness, self.error)
+        writeln!(f, "Organism #{}    Fitness: {:.2}%    Error: {:.4}", self.id, self.fitness*100.0, self.error)
     }
 }
 
-
-#[derive(Debug)]
+#[derive(Clone)]
 struct TraitInfo {
     id: usize,
     params: Vec<f32>,
+}
+
+impl Eq for TraitInfo {}
+impl PartialEq for TraitInfo {
+    fn eq(&self, other: &Self) -> bool {
+        self.id.eq(&other.id)
+    }
+}
+impl Hash for TraitInfo {
+    fn hash<H: Hasher>(&self, state: &mut H) {
+        self.id.hash(state);
+    }
 }
 
 impl TraitInfo {
@@ -192,7 +206,16 @@ impl TraitInfo {
     }
 }
 
-#[derive(Debug)]
+impl std::fmt::Display for TraitInfo {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        let p = &self.params;
+        assert_eq!(p.len(), 8);
+        writeln!(f, "Trait {}: [{:.4}, {:.4}, {:.4}, {:.4}, {:.4}, {:.4}, {:.4}, {:.4}]",
+                 self.id, p[0], p[1], p[2], p[3], p[4], p[5], p[6], p[7])
+    }
+}
+
+#[derive(Debug, Clone, Hash)]
 enum NodeType {
     Bias = 0,
     Sensor = 1,
@@ -200,10 +223,18 @@ enum NodeType {
     Hidden = 3,
 }
 
+#[derive(Clone, Hash)]
 struct NodeInfo {
     id: usize,
     trait_id: usize,
     type_: NodeType,
+}
+
+impl Eq for NodeInfo {}
+impl PartialEq for NodeInfo {
+    fn eq(&self, other: &Self) -> bool {
+        self.id.eq(&other.id) && self.trait_id.eq(&other.trait_id)
+    }
 }
 
 impl NodeInfo {
@@ -224,11 +255,11 @@ impl NodeInfo {
 
 impl std::fmt::Display for NodeInfo {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{2:?} node id: {0}, trait: {1}", self.id, self.trait_id, self.type_)
+        write!(f, "[{}: {2:?}] => {1}", self.id, self.trait_id, self.type_)
     }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Copy)]
 struct GeneInfo {
     trait_id: usize,
     in_node_id: usize,
@@ -238,6 +269,14 @@ struct GeneInfo {
     innovation_num: usize,
     mutation_num: f32,
     enable: bool,
+}
+
+impl std::fmt::Display for GeneInfo {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{5}<-[{1}=>{2}] {6} we: {3:.4} mu: {4:.4} {7} ({0})", self.innovation_num,
+               self.in_node_id, self.out_node_id, self.weight, self.mutation_num, self.trait_id,
+               if self.enable {"e"} else {"d"}, if self.is_recurrent {"rc"} else {""})
+    }
 }
 
 impl GeneInfo {
@@ -256,41 +295,99 @@ impl GeneInfo {
     }
 }
 
-struct Nodes(pub Vec<NodeInfo>);
+#[derive(Clone)]
+struct Nodes(pub HashSet<NodeInfo>);
 
 impl std::fmt::Display for Nodes {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        writeln!(f, "{} nodes:", self.0.len() )?;
+        write!(f, "{} nodes: ", self.0.len() )?;
         for n in &self.0 {
-            write!(f, "{} ", n);
+            write!(f, "{}; ", n)?;
         }
         writeln!(f, "")
     }
 }
 
+#[derive(Clone)]
+struct Traits(pub HashSet<TraitInfo>);
+
+impl std::fmt::Display for Traits {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        writeln!(f, "{} traits:", self.0.len() )?;
+        for n in &self.0 {
+            write!(f, "  {}", n)?;
+        }
+        // writeln!(f, "")
+        Ok(())
+    }
+}
+
+#[derive(Clone)]
+struct Genes(pub Vec<GeneInfo>);
+
+impl std::fmt::Display for Genes {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        writeln!(f, "{} genes:", self.0.len() )?;
+        for n in &self.0 {
+            writeln!(f, "  {}", n)?;
+        }
+        // writeln!(f, "")
+        Ok(())
+    }
+}
+
+#[derive(Clone)]
 struct ParsedOrganism {
     info: OrganismInfo,
-    traits: Vec<TraitInfo>,
+    traits: Traits,
     nodes: Nodes,
-    genes: Vec<GeneInfo>,
+    genes: Genes,
 }
 
 impl ParsedOrganism {
     fn new(info: OrganismInfo, traits: Vec<TraitInfo>, nodes: Vec<NodeInfo>, genes: Vec<GeneInfo>) -> Self {
-        Self { info, traits, nodes: Nodes(nodes), genes }
+        let traits = Traits(traits.iter().cloned().collect());
+        let nodes = Nodes(nodes.iter().cloned().collect());
+        let genes = Genes(genes.iter().cloned().collect());
+        Self { info, traits, nodes, genes }
     }
 }
 
 impl std::fmt::Display for ParsedOrganism {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        writeln!(f, "{}{:?}", self.info, self.traits)?;
-        writeln!(f, "{}{:?}", self.nodes, self.genes)
+        writeln!(f, "{}{}", self.info, self.traits)?;
+        writeln!(f, "{}{}", self.nodes, self.genes)
     }
 }
 
+fn parse_fittest() -> Option<ParsedOrganism> {
+    let f = find_fittest_files().unwrap();
+    // println!("{:?}", f);
+    assert!(!f.is_empty());
+    let mut f = f;
+    let mut fittest: Option<ParsedOrganism> = None;
+    for path in f.drain(..) {
+        println!("{}:", &path);
+        if let Ok(f) = parse_fittest_file(path) {
+            println!("{}", f);
+            if (&fittest).is_none() {
+                fittest = Some(f);
+            } else {
+                let replace = if let Some(fittest) = &fittest {
+                    fittest.info.fitness < f.info.fitness
+                } else {false};
+                if replace {
+                    fittest = Some(f);
+                }
+            }
+        }
+    }
+    fittest
+}
+
 fn parse_fittest_file(path: String) -> Result<ParsedOrganism, Error> {
-    let raws = std::fs::read_to_string(&path).map_err(Error::IoError)?;
-    println!("{}", raws);
+    // let raws = std::fs::read_to_string(&path).map_err(Error::IoError)?;
+    // println!("{}", raws);
     let reader = BufReader::new(File::open(path).map_err(Error::IoError)?);
     let mut reader = whiteread::Reader::new(reader);
     let mut org = OrganismInfo::default();
@@ -408,14 +505,29 @@ fn find_experiment_result_dirs() -> Result<Vec<String>, std::io::Error> {
 
 #[cfg(test)]
 mod tests {
-    use crate::{execute, find_experiment_result_dirs, find_fittest_files, AccNeatArgs, parse_fittest_file};
+    use crate::{execute, find_experiment_result_dirs, find_fittest_files, AccNeatArgs, parse_fittest_file, parse_fittest};
     use serial_test::serial;
 
     fn exec_default() -> (String, String) {
         let mut a = AccNeatArgs::default();
         a.force_delete = true;
-        a.pop_size = 10;
+        a.pop_size = 1000;
         a.maxgens = 10;
+        let r = execute(a);
+        assert!(r.is_ok());
+        let (r, errstr) = r.unwrap();
+        // println!("result: {}", &r);
+        // println!("errors: {}", &errstr);
+        assert!(!r.is_empty());
+        assert!(errstr.is_empty());
+        (r, errstr)
+    }
+
+    fn exec(pop_size: usize) -> (String, String) {
+        let mut a = AccNeatArgs::default();
+        a.force_delete = true;
+        a.pop_size = pop_size;
+        a.rng_seed = (std::time::Instant::now().elapsed().as_nanos() % 0xffffffff) as usize;
         let r = execute(a);
         assert!(r.is_ok());
         let (r, errstr) = r.unwrap();
@@ -428,7 +540,7 @@ mod tests {
 
     #[test]
     #[serial]
-    fn cannot_find_experiment_result_dirs() {
+    fn test_cannot_find_experiment_result_dirs() {
         std::fs::remove_dir_all("experiments").unwrap_or(());
         let f = find_experiment_result_dirs().unwrap();
         assert!(f.is_empty());
@@ -436,7 +548,7 @@ mod tests {
 
     #[test]
     #[serial]
-    fn can_execute() {
+    fn test_execute() {
         let r = exec_default();
         assert!(!r.0.is_empty());
         assert!(r.1.is_empty());
@@ -445,7 +557,7 @@ mod tests {
 
     #[test]
     #[serial]
-    fn can_find_fittest_file() {
+    fn test_find_fittest_file() {
         let (r, errstr) = exec_default();
         // println!("result: {}", &r);
         // println!("errors: {}", &errstr);
@@ -453,16 +565,17 @@ mod tests {
         assert!(errstr.is_empty());
         let f = find_fittest_files().unwrap();
         assert!(!f.is_empty());
-        println!("{:?}", f);
+        // println!("{:?}", f);
         std::fs::remove_dir_all("experiments").unwrap();
     }
 
     #[test]
     #[serial]
-    fn can_parse_fittest_file() {
+    fn test_parse_fittest_file() {
         let (r, errstr) = exec_default();
+        println!("{}", r);
         let f = find_fittest_files().unwrap();
-        println!("{:?}", f);
+        // println!("{:?}", f);
         assert!(!f.is_empty());
         assert_eq!(f.len(), 1);
         let mut f = f;
@@ -474,4 +587,26 @@ mod tests {
 
         std::fs::remove_dir_all("experiments").unwrap();
     }
+
+    #[test]
+    #[serial]
+    fn test_optimize() {
+
+        let mut fittest = None;
+        for pop_size in [12,25,36,50,60,75,90,100,120,180,360,420,540,680,800,1200,1600,3200] {
+            let (r, errstr) = exec(pop_size);
+            let f = parse_fittest();
+            if let Some(o) = f {
+                if o.info.fitness > 0.9999 {
+                    fittest = Some((pop_size,o));
+                    break;
+                }
+            }
+        }
+        if let Some((pop_size, fittest)) = fittest {
+            println!("With population size: {}, the winner is {}", pop_size, fittest);
+        }
+    }
+
+
 }
