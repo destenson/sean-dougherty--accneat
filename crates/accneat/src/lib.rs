@@ -1,3 +1,4 @@
+use std::fmt::Formatter;
 use std::fs::File;
 use std::io::{BufReader, Stderr};
 // use std::env::{args, Args};
@@ -153,7 +154,6 @@ enum Error {
     ParseIntError(std::num::ParseIntError),
 }
 
-#[derive(Debug)]
 struct OrganismInfo {
     id: usize,
     fitness: f32,
@@ -170,19 +170,127 @@ impl Default for OrganismInfo {
     }
 }
 
+impl std::fmt::Display for OrganismInfo {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        writeln!(f, "Org: {}  Fitness: {}  Error: {}", self.id, self.fitness, self.error)
+    }
+}
+
+
 #[derive(Debug)]
 struct TraitInfo {
+    id: usize,
+    params: Vec<f32>,
+}
 
+impl TraitInfo {
+    fn new(a: Vec<f32>) -> Self {
+        assert_eq!(a.len(), 9);
+        let id = a[0] as usize;
+        let params = a[1..].iter().cloned().collect();
+        Self { id, params }
+    }
 }
 
 #[derive(Debug)]
+enum NodeType {
+    Bias = 0,
+    Sensor = 1,
+    Output = 2,
+    Hidden = 3,
+}
+
+struct NodeInfo {
+    id: usize,
+    trait_id: usize,
+    type_: NodeType,
+}
+
+impl NodeInfo {
+    fn new(a: Vec<usize>) -> Self {
+        assert_eq!(a.len(), 3);
+        let id = a[0] as usize;
+        let trait_id = a[1] as usize;
+        let type_ = match a[2] {
+            0 => NodeType::Bias,
+            1 => NodeType::Sensor,
+            2 => NodeType::Output,
+            3 => NodeType::Hidden,
+            _ => unreachable!(),
+        };
+        Self { id, trait_id, type_ }
+    }
+}
+
+impl std::fmt::Display for NodeInfo {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{2:?} node id: {0}, trait: {1}", self.id, self.trait_id, self.type_)
+    }
+}
+
+#[derive(Debug)]
+struct GeneInfo {
+    trait_id: usize,
+    in_node_id: usize,
+    out_node_id: usize,
+    weight: f32,
+    is_recurrent: bool,
+    innovation_num: usize,
+    mutation_num: f32,
+    enable: bool,
+}
+
+impl GeneInfo {
+    fn new(a: Vec<f32>) -> Self {
+        assert_eq!(a.len(), 8);
+        Self {
+            trait_id: a[0] as usize,
+            in_node_id: a[1] as usize,
+            out_node_id: a[2] as usize,
+            weight: a[3],
+            is_recurrent: a[4] > 0.5,
+            innovation_num: a[5] as usize,
+            mutation_num: a[6],
+            enable: a[7] > 0.5,
+        }
+    }
+}
+
+struct Nodes(pub Vec<NodeInfo>);
+
+impl std::fmt::Display for Nodes {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        writeln!(f, "{} nodes:", self.0.len() )?;
+        for n in &self.0 {
+            write!(f, "{} ", n);
+        }
+        writeln!(f, "")
+    }
+}
+
 struct ParsedOrganism {
     info: OrganismInfo,
     traits: Vec<TraitInfo>,
+    nodes: Nodes,
+    genes: Vec<GeneInfo>,
 }
 
-fn parse_fittest_file(path: String) -> Result<(OrganismInfo, Vec<Vec<f32>>, Vec<Vec<usize>>, Vec<Vec<f32>>), Error> {
+impl ParsedOrganism {
+    fn new(info: OrganismInfo, traits: Vec<TraitInfo>, nodes: Vec<NodeInfo>, genes: Vec<GeneInfo>) -> Self {
+        Self { info, traits, nodes: Nodes(nodes), genes }
+    }
+}
+
+impl std::fmt::Display for ParsedOrganism {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        writeln!(f, "{}{:?}", self.info, self.traits)?;
+        writeln!(f, "{}{:?}", self.nodes, self.genes)
+    }
+}
+
+fn parse_fittest_file(path: String) -> Result<ParsedOrganism, Error> {
     let raws = std::fs::read_to_string(&path).map_err(Error::IoError)?;
+    println!("{}", raws);
     let reader = BufReader::new(File::open(path).map_err(Error::IoError)?);
     let mut reader = whiteread::Reader::new(reader);
     let mut org = OrganismInfo::default();
@@ -196,7 +304,7 @@ fn parse_fittest_file(path: String) -> Result<(OrganismInfo, Vec<Vec<f32>>, Vec<
                 org.id = usize::from_str(&v[2][1..]).map_err(Error::ParseIntError)?;
                 org.error = f32::from_str(&v[6]).map_err(Error::ParseFloatError)?;
                 org.fitness = f32::from_str(&v[4]).map_err(Error::ParseFloatError)?;
-                println!("Found Organism (# {}) with fitness, {} and error, {}", org.id, org.fitness, org.error);
+                // println!("Found Organism (# {}) with fitness, {} and error, {}", org.id, org.fitness, org.error);
             },
             10 => {
                 assert_eq!("trait", &v[0]);
@@ -207,7 +315,7 @@ fn parse_fittest_file(path: String) -> Result<(OrganismInfo, Vec<Vec<f32>>, Vec<
                         Err(_) => None,
                     }
                 }).collect();
-                traits.push(data);
+                traits.push(TraitInfo::new(data));
             },
             4 => {
                 assert_eq!("node", &v[0]);
@@ -217,7 +325,7 @@ fn parse_fittest_file(path: String) -> Result<(OrganismInfo, Vec<Vec<f32>>, Vec<
                         Err(_) => None,
                     }
                 }).collect();
-                nodes.push(data);
+                nodes.push(NodeInfo::new(data));
             },
             9 => {
                 assert_eq!("gene", &v[0]);
@@ -228,7 +336,7 @@ fn parse_fittest_file(path: String) -> Result<(OrganismInfo, Vec<Vec<f32>>, Vec<
                         Err(_) => None,
                     }
                 }).collect();
-                genes.push(data);
+                genes.push(GeneInfo::new(data));
             },
             2 => {
                 let cmd = &v[0];
@@ -236,19 +344,19 @@ fn parse_fittest_file(path: String) -> Result<(OrganismInfo, Vec<Vec<f32>>, Vec<
                 assert_eq!(id, org.id);
                 match cmd.as_str() {
                     "genomestart" => {
-                        println!("Found start of Genome");
+                        // println!("Found start of Genome");
                     },
                     "genomeend" => {
-                        println!("Found end of Genome");
+                        // println!("Found end of Genome");
                     },
-                    _ => {}
+                    _ => unreachable!(),
                 }
                 assert!(cmd == "genomestart" || cmd == "genomeend");
             },
-            _ => {unreachable!()}
+            _ => unreachable!(),
         }
     }
-    Ok((org, traits, nodes, genes))
+    Ok(ParsedOrganism::new(org, traits, nodes, genes))
     /*
 
     /* Organism #6 Fitness: 0.542682 Error: 1.82927 */
@@ -356,15 +464,14 @@ mod tests {
         let f = find_fittest_files().unwrap();
         println!("{:?}", f);
         assert!(!f.is_empty());
-        assert!(f.len() == 1);
+        assert_eq!(f.len(), 1);
         let mut f = f;
         for path in f.drain(..) {
             println!("{}:", &path);
             let f = parse_fittest_file(path);
-            println!("{:?}", f.unwrap());
+            println!("{}", f.unwrap());
         }
 
         std::fs::remove_dir_all("experiments").unwrap();
-        todo!();
     }
 }
