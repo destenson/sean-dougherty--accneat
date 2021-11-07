@@ -1,10 +1,11 @@
 extern crate cmake;
 
-use std::fs;
-
-use cmake::Config;
+// use std::process::Command;
+use std::{env, fs};
 use lazy_static::lazy_static;
 use regex::Regex;
+
+use cmake::Config;
 
 fn main() {
 
@@ -100,7 +101,7 @@ fn main() {
     );
 
     let dst = Config::new(".")
-        .uses_cxx11()
+        // .uses_cxx11()
         .no_build_target(true)
         .build();
 
@@ -119,7 +120,7 @@ fn main() {
 }
 
 fn link_lib_base() -> &'static str {
-    "accneatlib"
+    "accneatlib-staticexperiments"
 }
 
 mod bindings {
@@ -184,14 +185,14 @@ mod bindings {
             .clang_arg("-MMD")
             .clang_arg("-Wall")
             .clang_arg("-Werror")
-            .clang_arg("-std=c++17")
-            .allowlist_type("root::std::default_random_engine")
-            .allowlist_type("NEAT::.*")
-            // .opaque_type("root::std::.*")
-            // .opaque_type("::std::.*")
-            // .opaque_type("std::.*")
+            .clang_arg("-std=c++98")
+            .opaque_type("root::std::.*")
+            // // .opaque_type("::std::.*")
+            .opaque_type("std::.*")
             // .blocklist_type("root::std::.*")
             // .blocklist_type("std::.*")
+            .allowlist_type("std::default_random_engine")
+            .allowlist_type("NEAT::.*")
             .generate()
             .expect("Unable to generate bindings");
 
@@ -258,7 +259,7 @@ mod build {
     }
 
     pub fn main() {
-        println!("debug:Running the build for accneat");
+        println!("debug:Running the build for accneat static experiments");
 
         println!("cargo:rerun-if-changed=build.rs");
         println!("cargo:rerun-if-changed=CMakeLists.txt");
@@ -276,7 +277,6 @@ mod build {
     }
 }
 
-
 fn get_src_dependencies_from_cmakelists() -> Vec<String> {
 
     // read CMakeLists.txt file
@@ -286,7 +286,6 @@ fn get_src_dependencies_from_cmakelists() -> Vec<String> {
 
     println!("found contents: {}", &contents);
     lazy_static! {
-        // TODO: FIX THIS
         static ref RE: Regex = Regex::new(r"^ *\.\./\.\./src/.*\.[ch].*$").unwrap();
     }
     // contents

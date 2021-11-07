@@ -1,4 +1,4 @@
-#include "std.hxx"
+#include "std.h"
 
 #include "mazeevaluator.h"
 #include "map.h"

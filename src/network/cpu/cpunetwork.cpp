@@ -88,7 +88,7 @@ void CpuNetwork::activate(size_t ncycles) {
             for(size_t j = node.incoming_start; j < node.incoming_end; j++) {
                 NetLink &link = links[j];
                 sum += link.weight * act_curr[link.in_node_index];
-                //cout << "from=" << (link.in_node_index+1) << ", to=" << (i+1) << ", weight=" << link.weight << ", act[from]=" << act_curr[link.in_node_index] << ", partial=" << link.weight * act_curr[link.in_node_index] << ", sum=" << sum << endl;
+//                cout << "[ACT] from=" << (link.in_node_index+1) << ", to=" << (i+1) << ", weight=" << link.weight << ", act[from]=" << act_curr[link.in_node_index] << ", partial=" << link.weight * act_curr[link.in_node_index] << ", sum=" << sum << endl;
             }
 
             act_new[i] = NEAT::fsigmoid(sum,

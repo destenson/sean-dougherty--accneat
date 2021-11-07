@@ -1,8 +1,8 @@
 [package]
-name = "libaccneat-sys"
-version = "0.2.0"
+name = "libaccneat-staticexperiments"
+version = "0.1.0"
 authors = ["Dennis E <git@destenson.digital>"]
-links = "accneatlib"
+links = "accneatlib-staticexperiments"
 edition = "2021"
 description = """
 Rust wrapper for the accneat library.
@@ -11,12 +11,12 @@ Rust wrapper for the accneat library.
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [lib]
-name = "accneat"
+name = "accneat_staticexperiments"
 
 [build-dependencies]
 bindgen = "0.59"
 cmake = "0.1"
 dotenv = "0.15"
-lazy_static = "1"
+lazy_static = "1.4"
 regex = "1"
 

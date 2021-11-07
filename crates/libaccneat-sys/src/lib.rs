@@ -10,7 +10,6 @@
 include!(concat!(env!("OUT_DIR"), "/bindings.rs"));
 
 pub use root::NEAT;
-pub use root::GenomeManager;
 pub use root::NEAT::*;
 
 
@@ -38,6 +37,15 @@ pub fn get_env() -> Option<&'static mut NeatEnv> {
     // }
 // }
 
+// struct Experiment {
+//
+// }
+
+// fn get_xor_exp<'a>() -> Option<&'a mut Experiment> {
+//     let s: Vec<i8> = "xor".as_bytes().iter().map(|&x| x as i8).collect();
+//     let e: *mut root::NEAT::Experiment = unsafe { Experiment::get(s.as_ptr()) };
+//     unsafe { e.as_mut() }
+// }
 
 #[cfg(test)]
 mod tests {
@@ -47,4 +55,12 @@ mod tests {
     fn is_env_initialized() {
         println!("{:?}", get_env());
     }
+
+    // #[test]
+    // fn test_get_xor_exp() {
+    //     let exp = get_xor_exp();
+    //     assert!(exp.is_some());
+    //     let name: Vec<i8> = "xor".as_bytes().iter().map(|&x| x as i8).collect();
+    //     assert!(exp.unwrap().name == name.as_ptr());
+    // }
 }

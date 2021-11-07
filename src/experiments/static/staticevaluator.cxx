@@ -1,10 +1,11 @@
-#include "std.hxx"
+#include "std.h"
 
 #include "network.h"
 #include "networkexecutor.h"
 #include "staticevaluator.h"
 
-#include <assert.h>
+#include <cassert>
+#include <stdio.h>
 
 using namespace NEAT;
 using namespace std;
@@ -189,9 +190,9 @@ static void create_config(const std::vector<Test> &tests,
     //---
     //--- Show tests
     //---
-    cout << "=================" << endl;
-    cout << "===== TESTS =====" << endl;
-    cout << "=================" << endl;
+    printf("=================\n");
+    printf("===== TESTS =====\n");
+    printf("=================\n");
     for(size_t i = 0; i < tests.size(); i++) {
         const Test &t = tests[i];
         printf("~~~ %s\n", t.name.c_str());

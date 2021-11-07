@@ -4,6 +4,8 @@
 #define EVALUATOREXPERIMENT_H__
 
 #include "experiment.h"
+
+#if __cplusplus >= 199711L
 #include "genomemanager.h"
 #include "network.h"
 #include "organism.h"
@@ -11,6 +13,8 @@
 #include "stats.h"
 #include "timer.h"
 #include "util.h"
+#else
+#endif
 
 namespace NEAT {
 
@@ -21,9 +25,13 @@ namespace NEAT {
 //------------------------------
     class EvaluatorExperiment : public Experiment {
     private:
+        const char* get_dir_base_path() {
+            return "./experiments";
+        }
+
         std::string get_dir_path(int experiment_num) {
             char buf[1024];
-            sprintf(buf, "./experiment_%d", experiment_num);
+            sprintf(buf, "%s/experiment_%d", get_dir_base_path(), experiment_num);
             return buf;
         }
 
@@ -68,6 +76,8 @@ namespace NEAT {
             vector<size_t> nnodes;
             vector<size_t> nlinks;
             vector<real_t> fitness;
+
+            mkdir(get_dir_base_path());
 
             for(int expcount = 1; expcount <= env->num_runs; expcount++) {
                 mkdir( get_dir_path(expcount) );

@@ -26,12 +26,22 @@ namespace NEAT {
 		NT_HIDDEN = 3
 	};
 
+#if __cplusplus < 199711L
+    class OrganismEvaluation {
+    public:
+        real_t fitness;
+        real_t error;
+
+        void reset() {fitness = error = 0.0;}
+    };
+#else
     struct OrganismEvaluation {
         real_t fitness;
         real_t error;
 
         void reset() {fitness = error = 0.0;}
     };
+#endif
 
 #undef __in
 #undef __out

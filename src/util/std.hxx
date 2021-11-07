@@ -3,14 +3,16 @@
 #ifndef UTIL_STD_H__
 #define UTIL_STD_H__
 
-#include <cstdio>
-#include <cstdlib>
-#include <cstring>
-#include <iostream>
-#include <map>
+#define nullptr_t ((char*))
+//#define nullptr (NULL)
+
+//#include <cstdio>
+#include <stdlib.h>
+#include <string.h>
+//#include <iostream>
 #include <string>
+#include <map>
 #include <vector>
-#include <random>
+//#include <random>
 
 #endif // #ifndef UTIL_STD_H__
-

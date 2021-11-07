@@ -3,7 +3,10 @@
 #ifndef UTIL_RNG_H__
 #define UTIL_RNG_H__
 
+#if __cplusplus >= 199711L
 #include "neat.h"
+#else
+#endif
 
 namespace NEAT {
 

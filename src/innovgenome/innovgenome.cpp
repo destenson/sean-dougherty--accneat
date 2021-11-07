@@ -18,6 +18,7 @@
 #include "protoinnovlinkgene.h"
 #include "recurrencychecker.h"
 #include "util.h"
+#include "rng.h"
 #include <assert.h>
 
 using namespace NEAT;

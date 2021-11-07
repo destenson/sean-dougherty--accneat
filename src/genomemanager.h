@@ -3,8 +3,11 @@
 #ifndef GENOMEMANAGER_H__
 #define GENOMEMANAGER_H__
 
+#if __cplusplus >= 199711L
 #include "neat.h"
 #include "rng.h"
+#else
+#endif
 
 namespace NEAT {
 
