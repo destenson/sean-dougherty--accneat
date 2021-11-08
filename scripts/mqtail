@@ -14,11 +14,11 @@ else:
 stat_period = int(max(5, min(60, seconds / 2)))
 
 def stat():
-    print time.ctime()
+    print(time.ctime())
     os.system('qselect -u dougher1')
 
 while True:
-    print "**************************************"
+    print("**************************************")
     os.system("tail -n 80 out")
     stat()
     remain = seconds
