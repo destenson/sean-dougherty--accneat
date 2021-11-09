@@ -18,12 +18,12 @@
 
 using NEAT::real_t;
 
-const std::vector<NEAT::nodetype> NEAT::nodetypes = {
-    NEAT::NT_BIAS,
-    NEAT::NT_SENSOR,
-    NEAT::NT_OUTPUT,
-    NEAT::NT_HIDDEN
-};
+//const std::vector<NEAT::nodetype> NEAT::nodetypes = {
+//    NEAT::NT_BIAS,
+//    NEAT::NT_SENSOR,
+//    NEAT::NT_OUTPUT,
+//    NEAT::NT_HIDDEN
+//};
 
 using NEAT::NeatEnv;
 

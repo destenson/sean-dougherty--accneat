@@ -77,8 +77,8 @@ pub struct AccNeatArgs {
 pub(crate) fn build_cmd(args: &[String]) -> std::io::Result<Output> {
     // println!("build_cmd({:?})", &args);
     if cfg!(target_os = "windows") {
-        // Command::new(".\\vendor\\accneat\\cmake-build-debug\\accneat.exe")
-        Command::new("..\\..\\cmake-build-debug\\accneat.exe")
+        Command::new(".\\vendor\\accneat\\cmake-build-debug\\accneat.exe")
+        // Command::new("..\\..\\cmake-build-debug\\accneat.exe")
             .args(args)
             .output()
     } else {

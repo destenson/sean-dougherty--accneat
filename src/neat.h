@@ -33,7 +33,7 @@ namespace NEAT {
     enum class PopulationType {SPECIES};
     enum class GenomeType {INNOV};
 
-    extern const std::vector<nodetype> nodetypes;
+//    extern const std::vector<nodetype> nodetypes;
 
     inline bool is_input(nodetype type) {
         return (type == NT_BIAS) || (type == NT_SENSOR);
